@@ -1,7 +1,7 @@
 name: Build Swiftfin
 
 on:
-  workflow_dispatch:   # lets you trigger it manually from the Actions tab
+  workflow_dispatch:
   push:
     branches: [ main ]
 
@@ -22,8 +22,6 @@ jobs:
       - name: Install build tools
         run: brew install carthage swiftgen swiftformat
 
-      # Carthage downloads VLCKit, which is very large.
-      # Caching it saves ~15 minutes on repeat runs.
       - name: Cache Carthage
         uses: actions/cache@v4
         with:
@@ -43,10 +41,6 @@ jobs:
           PRODUCT_BUNDLE_IDENTIFIER = org.jellyfin.swiftfin
           EOF
 
-      - name: List schemes (for debugging)
-        run: |
-          xcodebuild -project Swiftfin.xcodeproj -list
-
       - name: Build (unsigned)
         run: |
           xcodebuild \
@@ -62,11 +56,11 @@ jobs:
 
       - name: Package as IPA
         run: |
-          APP_PATH=$(find DerivedData -name "*.app" | head -n 1)
+          APP_PATH=$(find DerivedData -name "*.app" -not -path "*/SourcePackages/*" | head -n 1)
+          echo "Found app at: $APP_PATH"
           mkdir -p Payload
           cp -r "$APP_PATH" Payload/
           zip -r Swiftfin.ipa Payload
-          echo "Built: $APP_PATH"
 
       - name: Upload IPA artifact
         uses: actions/upload-artifact@v4
