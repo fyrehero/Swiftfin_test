@@ -43,18 +43,21 @@ jobs:
           PRODUCT_BUNDLE_IDENTIFIER = org.jellyfin.swiftfin
           EOF
 
+      - name: List schemes (for debugging)
+        run: |
+          xcodebuild -project Swiftfin.xcodeproj -list
+
       - name: Build (unsigned)
         run: |
           xcodebuild \
             -project Swiftfin.xcodeproj \
-            -scheme "Swiftfin (iOS)" \
+            -scheme "Swiftfin" \
             -configuration Release \
             -destination "generic/platform=iOS" \
             -derivedDataPath DerivedData \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
-            AD_HOC_CODE_SIGNING_ALLOWED=YES \
-            | xcpretty || true
+            AD_HOC_CODE_SIGNING_ALLOWED=YES
 
       - name: Package as IPA
         run: |
