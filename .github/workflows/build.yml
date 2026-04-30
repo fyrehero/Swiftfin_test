@@ -55,6 +55,7 @@ jobs:
             -configuration Release \
             -destination "generic/platform=iOS" \
             -derivedDataPath DerivedData \
+            -skipMacroValidation \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             AD_HOC_CODE_SIGNING_ALLOWED=YES
