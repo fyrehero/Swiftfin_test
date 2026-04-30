@@ -20,7 +20,7 @@ jobs:
           xcode-version: latest-stable
 
       - name: Install build tools
-        run: brew install carthage swiftgen swiftformat
+        run: brew install carthage swiftgen swiftformat swiftlint
 
       - name: Cache Carthage
         uses: actions/cache@v4
@@ -48,7 +48,7 @@ jobs:
             -scheme "Swiftfin" \
             -configuration Release \
             -destination "generic/platform=iOS" \
-            -derivedDataPath DerivedData \
+            -derivedDataPath /tmp/DerivedData \
             -skipMacroValidation \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
@@ -56,7 +56,7 @@ jobs:
 
       - name: Package as IPA
         run: |
-          APP_PATH=$(find DerivedData -name "*.app" -not -path "*/SourcePackages/*" | head -n 1)
+          APP_PATH=$(find /tmp/DerivedData -name "*.app" -not -path "*/SourcePackages/*" | head -n 1)
           echo "Found app at: $APP_PATH"
           mkdir -p Payload
           cp -r "$APP_PATH" Payload/
